@@ -30,6 +30,7 @@ let score = 0;
 let avocadosGr = 0;
 let text;
 let blueDinoDir = 'r';
+let isRunning = true;
 
 function preload() {
     this.load.image('backGr', 'assets/parallax-mountain-bg.png');
@@ -154,23 +155,36 @@ function create() {
 
 
     this.physics.add.collider(redDino, avocados, (redDino, avocado) => {
-        avocado.body.stop();
-        avocado.body.moves = false;
-        avocado.alpha = 0;
-        avocados.remove(avocado);
-        score++;
-        avocadosGr++;
-        mainText.setText('Score: ' + score);
+        if (isRunning) {
+            avocado.body.stop();
+            avocado.body.moves = false;
+            avocado.alpha = 0;
+            avocados.remove(avocado);
+            score++;
+            avocadosGr++;
+            mainText.setText('Score: ' + score);
+        }
     }, null, this);
 
-    this.physics.add.collider(blueDino, avocados, (redDino, avocado) => {
-        avocado.body.stop();
-        avocado.body.moves = false;
-        avocado.alpha = 0;
-        avocados.remove(avocado);
-        score--;
+    this.physics.add.collider(blueDino, avocados, (blueDino, avocado) => {
+        if (isRunning) {
+            avocado.body.stop();
+            avocado.body.moves = false;
+            avocado.alpha = 0;
+            avocados.remove(avocado);
+            score--;
 
-        mainText.setText('Score: ' + score);
+            mainText.setText('Score: ' + score);
+        }
+    }, null, this);
+
+    this.physics.add.collider(blueDino, redDino, (blueDino, redDino) => {
+        isRunning = false;
+        blueDino.body.stop();
+        blueDino.body.moves = false;
+        redDino.body.stop();
+        redDino.body.moves = false;
+        mainText.setText('GAME OVER    final score: ' + score);
     }, null, this);
 
     mainText = this.add.text(20, 20, 'Score: ' + score, {
@@ -185,64 +199,67 @@ let inProgress = false;
 let isJumping = false;
 
 function newAvocado(context, avocados) {
-    let aleat = Math.random();
+    if (isRunning) {
+        let aleat = Math.random();
 
-    if (aleat > 0.5) {
-        let newAvoc = avocados.create((aleat * 8000) % 1280, 450, 'avocado');
-        newAvoc.setScale(2);
-        newAvoc.setCollideWorldBounds(true);
+        if (aleat > 0.5) {
+            let newAvoc = avocados.create((aleat * 8000) % 1280, 450, 'avocado');
+            newAvoc.setScale(2);
+            newAvoc.setCollideWorldBounds(true);
+        }
     }
-
 }
 
 
 function update() {
-    const cursors = this.input.keyboard.createCursorKeys();
+    if(isRunning) {
+        const cursors = this.input.keyboard.createCursorKeys();
 
-    if (blueDinoDir == 'r') {
-        blueDino.setVelocityX(60 + Math.abs(avocadosGr*20));
-        blueDino.anims.play('rightBlue', true);
-        if (blueDino.x == 1244) {
-            blueDinoDir = 'l'
+        if (blueDinoDir == 'r') {
+            blueDino.setVelocityX(60 + Math.abs(avocadosGr * 20));
+            blueDino.anims.play('rightBlue', true);
+            if (blueDino.x == 1244) {
+                blueDinoDir = 'l'
+            }
         }
-    }
 
-    if (blueDinoDir == 'l') {
-        blueDino.setVelocityX(-60 - Math.abs(avocadosGr*20));
-        blueDino.anims.play('leftBlue', true);
-        if (blueDino.x == 36) {
-            blueDinoDir = 'r'
+        if (blueDinoDir == 'l') {
+            blueDino.setVelocityX(-60 - Math.abs(avocadosGr * 20));
+            blueDino.anims.play('leftBlue', true);
+            if (blueDino.x == 36) {
+                blueDinoDir = 'r'
+            }
         }
-    }
 
 
-    if (redDino.y == 684) {
-        isJumping = false
-    }
+        if (redDino.y == 684) {
+            isJumping = false
+        }
 
-    if (cursors.left.isDown) {
-        redDino.setVelocityX(-160);
-        if (!isJumping)
-            redDino.anims.play('left', true);
+        if (cursors.left.isDown) {
+            redDino.setVelocityX(-160);
+            if (!isJumping)
+                redDino.anims.play('left', true);
 
-    } else if (cursors.right.isDown) {
-        redDino.setVelocityX(160);
-        if (!isJumping)
-            redDino.anims.play('right', true);
+        } else if (cursors.right.isDown) {
+            redDino.setVelocityX(160);
+            if (!isJumping)
+                redDino.anims.play('right', true);
 
-    } else {
-        redDino.setVelocityX(0);
-        if (!isJumping)
-            redDino.anims.play('idle', true);
-    }
+        } else {
+            redDino.setVelocityX(0);
+            if (!isJumping)
+                redDino.anims.play('idle', true);
+        }
 
-    if (isJumping) {
-        redDino.anims.play('jumping', true);
-    }
+        if (isJumping) {
+            redDino.anims.play('jumping', true);
+        }
 
-    if (cursors.up.isDown && !isJumping) {
-        redDino.setVelocityY(-300);
-        isJumping = true;
+        if (cursors.up.isDown && !isJumping) {
+            redDino.setVelocityY(-300);
+            isJumping = true;
+        }
     }
 
 }
