@@ -81,10 +81,16 @@ function create() {
     redDino = this.physics.add.sprite(100, 450, 'redDino');
     redDino.setScale(3);
     redDino.setCollideWorldBounds(true);
+    redDino.body.setSize(10, 10, false);
+    redDino.body.setOffset(10,10);
 
     blueDino = this.physics.add.sprite(1000, 450, 'blueDino');
     blueDino.setScale(3);
     blueDino.setCollideWorldBounds(true);
+    blueDino.body.setSize(10, 10, false);
+    blueDino.body.setOffset(10,10);
+
+
 
     this.anims.create({
         key: 'idle',
@@ -218,7 +224,7 @@ function update() {
         if (blueDinoDir == 'r') {
             blueDino.setVelocityX(60 + Math.abs(avocadosGr * 20));
             blueDino.anims.play('rightBlue', true);
-            if (blueDino.x == 1244) {
+            if (blueDino.x == 1256) {
                 blueDinoDir = 'l'
             }
         }
@@ -226,13 +232,12 @@ function update() {
         if (blueDinoDir == 'l') {
             blueDino.setVelocityX(-60 - Math.abs(avocadosGr * 20));
             blueDino.anims.play('leftBlue', true);
-            if (blueDino.x == 36) {
+            if (blueDino.x == 6) {
                 blueDinoDir = 'r'
             }
         }
 
-
-        if (redDino.y == 684) {
+        if (redDino.y == 696) {
             isJumping = false
         }
 
