@@ -27,6 +27,7 @@ let redDino;
 let mainPlatform;
 let platforms;
 let score = 0;
+let text;
 
 function preload() {
     this.load.image('backGr', 'assets/parallax-mountain-bg.png');
@@ -121,7 +122,16 @@ function create() {
             avocados.remove(avocado);
             console.log(score);
             score++;
+
+            mainText.setText('Score: ' + score);
     }, null, this);
+
+    mainText = this.add.text(20, 20, 'Score: ' + score , {
+        fontSize: '32px',
+        fill: '#FFFFFF',
+        font: 'bold 32px Consolas',
+        align: 'center'
+    });
 }
 
 let inProgress = false;
