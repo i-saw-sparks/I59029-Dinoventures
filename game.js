@@ -27,6 +27,7 @@ let redDino, blueDino;
 let mainPlatform;
 let platforms;
 let score = 0;
+let avocadosGr = 0;
 let text;
 let blueDinoDir = 'r';
 
@@ -158,7 +159,7 @@ function create() {
         avocado.alpha = 0;
         avocados.remove(avocado);
         score++;
-
+        avocadosGr++;
         mainText.setText('Score: ' + score);
     }, null, this);
 
@@ -199,7 +200,7 @@ function update() {
     const cursors = this.input.keyboard.createCursorKeys();
 
     if (blueDinoDir == 'r') {
-        blueDino.setVelocityX(160);
+        blueDino.setVelocityX(60 + Math.abs(avocadosGr*20));
         blueDino.anims.play('rightBlue', true);
         if (blueDino.x == 1244) {
             blueDinoDir = 'l'
@@ -207,7 +208,7 @@ function update() {
     }
 
     if (blueDinoDir == 'l') {
-        blueDino.setVelocityX(-160);
+        blueDino.setVelocityX(-60 - Math.abs(avocadosGr*20));
         blueDino.anims.play('leftBlue', true);
         if (blueDino.x == 36) {
             blueDinoDir = 'r'
