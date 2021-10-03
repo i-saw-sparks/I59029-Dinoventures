@@ -57,6 +57,16 @@ function create() {
     redDino = this.physics.add.sprite(100, 450, 'redDino');
     redDino.setScale(3);
     redDino.setCollideWorldBounds(true);
+
+    this.anims.create({
+        key:'idle',
+        frames: this.anims.generateFrameNumbers('redDino',{
+            start:1,
+            end:2
+        }),
+        frameRate: 5,
+        reapeat: -1
+    });
 }
 
 let inProgress = false;
@@ -72,7 +82,12 @@ function update() {
 
     } else {
         redDino.setVelocityX(0);
-        // redDino.anims.play(inProgress ? 'down' : 'idle', true);
+        redDino.anims.play('idle', true);
+    }
+
+    if(cursors.up.isDown && redDino.y == 684){
+        
+        redDino.setVelocityY(-300);
     }
 
 }
