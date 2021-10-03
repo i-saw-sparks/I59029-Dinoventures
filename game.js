@@ -40,6 +40,12 @@ function preload() {
             frameWidth: 24,
             frameHeight: 24
         });
+    this.load.spritesheet('redDinoRev',
+        'assets/DinoSprites - rev.png',
+        {
+            frameWidth: 24,
+            frameHeight: 24
+        });
 }
 
 function create() {
@@ -59,10 +65,40 @@ function create() {
     redDino.setCollideWorldBounds(true);
 
     this.anims.create({
-        key:'idle',
-        frames: this.anims.generateFrameNumbers('redDino',{
-            start:1,
-            end:2
+        key: 'idle',
+        frames: this.anims.generateFrameNumbers('redDino', {
+            start: 0,
+            end: 3
+        }),
+        frameRate: 5,
+        reapeat: -1
+    });
+
+    this.anims.create({
+        key: 'jumping',
+        frames: this.anims.generateFrameNumbers('redDino', {
+            start: 17,
+            end: 18
+        }),
+        frameRate: 5,
+        reapeat: -1
+    });
+
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('redDino', {
+            start: 4,
+            end: 10
+        }),
+        frameRate: 5,
+        reapeat: -1
+    });
+
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('redDinoRev', {
+            start: 13,
+            end: 19
         }),
         frameRate: 5,
         reapeat: -1
@@ -70,24 +106,38 @@ function create() {
 }
 
 let inProgress = false;
+let isJumping = false;
 
 
 function update() {
     const cursors = this.input.keyboard.createCursorKeys();
+    if (redDino.y == 684) {
+        isJumping = false
+    }
+
     if (cursors.left.isDown) {
         redDino.setVelocityX(-160);
+        if (!isJumping)
+            redDino.anims.play('left', true);
 
     } else if (cursors.right.isDown) {
         redDino.setVelocityX(160);
+        if (!isJumping)
+            redDino.anims.play('right', true);
 
     } else {
         redDino.setVelocityX(0);
-        redDino.anims.play('idle', true);
+        if (!isJumping)
+            redDino.anims.play('idle', true);
     }
 
-    if(cursors.up.isDown && redDino.y == 684){
-        
+    if (isJumping) {
+        redDino.anims.play('jumping', true);
+    }
+
+    if (cursors.up.isDown && !isJumping) {
         redDino.setVelocityY(-300);
+        isJumping = true;
     }
 
 }
