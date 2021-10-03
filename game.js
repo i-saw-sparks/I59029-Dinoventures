@@ -26,6 +26,7 @@ let trees;
 let redDino;
 let mainPlatform;
 let platforms;
+let score = 0;
 
 function preload() {
     this.load.image('backGr', 'assets/parallax-mountain-bg.png');
@@ -34,6 +35,7 @@ function preload() {
     this.load.image('mountains', 'assets/parallax-mountain-mountains.png');
     this.load.image('mouintainTrees', 'assets/parallax-mountain-trees.png');
     this.load.image('platform', 'assets/plat.png')
+    this.load.image('avocado', 'assets/Avocado.png')
     this.load.spritesheet('redDino',
         'assets/DinoSprites - mort.png',
         {
@@ -103,14 +105,47 @@ function create() {
         frameRate: 5,
         reapeat: -1
     });
+
+    avocados = this.physics.add.group();
+
+    setInterval(() => {
+        newAvocado(this, avocados);
+    }, 1000);
+
+   
+
+    this.physics.add.collider(redDino, avocados, (redDino, avocado) => {
+            avocado.body.stop();
+            avocado.body.moves = false;
+            avocado.alpha = 0;
+            avocados.remove(avocado);
+            console.log(score);
+            score++;
+    }, null, this);
 }
 
 let inProgress = false;
 let isJumping = false;
 
+function newAvocado(context, avocados){
+    let aleat = Math.random();
+
+    if(aleat>0.5){
+
+        console.log(aleat)
+        let newAvoc = avocados.create((aleat*8000)%1280, 450, 'avocado');
+        //let newAvoc = context.physics.add.sprite((aleat*8000)%1280, 450, 'avocado');
+        newAvoc.setScale(2);
+        newAvoc.setCollideWorldBounds(true);
+    }
+
+}
+
 
 function update() {
     const cursors = this.input.keyboard.createCursorKeys();
+    
+
     if (redDino.y == 684) {
         isJumping = false
     }
