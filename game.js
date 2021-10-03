@@ -23,11 +23,12 @@ const game = new Phaser.Game(config);
 let bg;
 let mountainFar;
 let trees;
-let redDino;
+let redDino, blueDino;
 let mainPlatform;
 let platforms;
 let score = 0;
 let text;
+let blueDinoDir = 'r';
 
 function preload() {
     this.load.image('backGr', 'assets/parallax-mountain-bg.png');
@@ -49,6 +50,18 @@ function preload() {
             frameWidth: 24,
             frameHeight: 24
         });
+    this.load.spritesheet('blueDino',
+        'assets/DinoSprites - doux.png',
+        {
+            frameWidth: 24,
+            frameHeight: 24
+        });
+    this.load.spritesheet('blueDinoRev',
+        'assets/DinoSprites - bluerev.png',
+        {
+            frameWidth: 24,
+            frameHeight: 24
+        });
 }
 
 function create() {
@@ -66,6 +79,10 @@ function create() {
     redDino = this.physics.add.sprite(100, 450, 'redDino');
     redDino.setScale(3);
     redDino.setCollideWorldBounds(true);
+
+    blueDino = this.physics.add.sprite(1000, 450, 'blueDino');
+    blueDino.setScale(3);
+    blueDino.setCollideWorldBounds(true);
 
     this.anims.create({
         key: 'idle',
@@ -107,26 +124,55 @@ function create() {
         reapeat: -1
     });
 
+    this.anims.create({
+        key: 'rightBlue',
+        frames: this.anims.generateFrameNumbers('blueDino', {
+            start: 4,
+            end: 10
+        }),
+        frameRate: 5,
+        reapeat: -1
+    });
+
+    this.anims.create({
+        key: 'leftBlue',
+        frames: this.anims.generateFrameNumbers('blueDinoRev', {
+            start: 13,
+            end: 19
+        }),
+        frameRate: 5,
+        reapeat: -1
+    });
+
     avocados = this.physics.add.group();
 
     setInterval(() => {
         newAvocado(this, avocados);
     }, 1000);
 
-   
+
 
     this.physics.add.collider(redDino, avocados, (redDino, avocado) => {
-            avocado.body.stop();
-            avocado.body.moves = false;
-            avocado.alpha = 0;
-            avocados.remove(avocado);
-            console.log(score);
-            score++;
+        avocado.body.stop();
+        avocado.body.moves = false;
+        avocado.alpha = 0;
+        avocados.remove(avocado);
+        score++;
 
-            mainText.setText('Score: ' + score);
+        mainText.setText('Score: ' + score);
     }, null, this);
 
-    mainText = this.add.text(20, 20, 'Score: ' + score , {
+    this.physics.add.collider(blueDino, avocados, (redDino, avocado) => {
+        avocado.body.stop();
+        avocado.body.moves = false;
+        avocado.alpha = 0;
+        avocados.remove(avocado);
+        score--;
+
+        mainText.setText('Score: ' + score);
+    }, null, this);
+
+    mainText = this.add.text(20, 20, 'Score: ' + score, {
         fontSize: '32px',
         fill: '#FFFFFF',
         font: 'bold 32px Consolas',
@@ -137,14 +183,11 @@ function create() {
 let inProgress = false;
 let isJumping = false;
 
-function newAvocado(context, avocados){
+function newAvocado(context, avocados) {
     let aleat = Math.random();
 
-    if(aleat>0.5){
-
-        console.log(aleat)
-        let newAvoc = avocados.create((aleat*8000)%1280, 450, 'avocado');
-        //let newAvoc = context.physics.add.sprite((aleat*8000)%1280, 450, 'avocado');
+    if (aleat > 0.5) {
+        let newAvoc = avocados.create((aleat * 8000) % 1280, 450, 'avocado');
         newAvoc.setScale(2);
         newAvoc.setCollideWorldBounds(true);
     }
@@ -154,7 +197,23 @@ function newAvocado(context, avocados){
 
 function update() {
     const cursors = this.input.keyboard.createCursorKeys();
-    
+
+    if (blueDinoDir == 'r') {
+        blueDino.setVelocityX(160);
+        blueDino.anims.play('rightBlue', true);
+        if (blueDino.x == 1244) {
+            blueDinoDir = 'l'
+        }
+    }
+
+    if (blueDinoDir == 'l') {
+        blueDino.setVelocityX(-160);
+        blueDino.anims.play('leftBlue', true);
+        if (blueDino.x == 36) {
+            blueDinoDir = 'r'
+        }
+    }
+
 
     if (redDino.y == 684) {
         isJumping = false
